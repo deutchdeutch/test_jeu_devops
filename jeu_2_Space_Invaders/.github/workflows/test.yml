@@ -1,0 +1,23 @@
+name: JEUX CI
+on: 
+push:
+   branches:[ "**" ]
+pull_request:
+  branches:[ "main" ]
+workflow_dispatch: 
+jobs:
+  my_build_and_test:
+    runs-on: ubuntu:latest
+    steps:
+      - name: checkout
+        uses: action/checkout@v3
+      - name: setup node
+        uses: action/setup-node@v3
+        with:
+          node-version: "20"
+          cache: npm 
+      - name: install
+        run: npm ci
+
+
+
