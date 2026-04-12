@@ -1,0 +1,26 @@
+name: CI - Two Ships
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_1_two_ships_passing_the_night
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Unit tests
+        run: npm run test
