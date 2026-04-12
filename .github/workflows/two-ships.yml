@@ -21,6 +21,22 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        
+
       - name: Unit tests
         run: npm run test
+
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Audit dependencies
+        run: npm audit
+        continue-on-error: true
+      
+      - name: Test summary
+        run: |
+          echo "Résultats CI - Two Ships " >> $GITHUB_STEP_SUMMARY
+          echo "Tests unitaires lancés" >> $GITHUB_STEP_SUMMARY
+          echo "Lint lancé (continue-on-error)" >> $GITHUB_STEP_SUMMARY
+          echo "Audit des dépendances lancé" >> $GITHUB_STEP_SUMMARY
+          
