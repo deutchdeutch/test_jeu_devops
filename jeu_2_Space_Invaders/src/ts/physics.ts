@@ -36,11 +36,11 @@ let destination: Vector = {
 
 let gameOver = false;
 
-const particles: Particle[] = [];
+export const particles: Particle[] = [];
 
-const projectiles: Projectile[] = [];
+export const projectiles: Projectile[] = [];
 
-const enemies: Enemy[] = [
+export const enemies: Enemy[] = [
   createEnemy(Type.Basic),
 ];
 
@@ -54,7 +54,7 @@ export function init() {
   };
 }
 
-function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput {
+export function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput {
   for (const pKey in particles) {
     const particle = particles[pKey];
     particle.age += deltaTime;
@@ -147,3 +147,4 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
     gameOver
   };
 }
+
