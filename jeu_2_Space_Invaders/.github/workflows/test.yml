@@ -18,6 +18,17 @@ jobs:
           cache: "npm" 
       - name: Install
         run: npm ci
+      - name: Run Linter
+      # on utilise une action qui transforme les erreurs Eslint en annotation Github
+        run: npm run lint -- --format=stylish
+      - name: Security Audit
+        run: npm audit -- audit-level= high #s'arrête si une faille grave est trouvé
+      - name: Run  Tests
+      # --ci et le reporter github-action crées les annotations automatiques
+        run: npm test -- --ci --reporters=default --reporters=github-actions
+      - name: Build Project
+        run: npm run build
+
 
 
 
