@@ -9,7 +9,9 @@
     "build": "vite build",
     "serve": "vite preview",
     "test": "mocha tests/*.test.js",
-    "lint": "eslint src/*.js"
+    "lint": "eslint src/*.js",
+    "cypress:run": "cypress run",
+    "test:e2e": "start-server-and-test dev http://localhost:3000 cypress:run"
   },
   "repository": {
     "type": "git",
@@ -43,6 +45,7 @@
     "prettier": "2.2.1",
     "roadroller": "2.1.0",
     "rollup": "2.56.3",
+    "start-server-and-test": "^2.1.5",
     "through2": "4.0.2",
     "vite": "2.5.6"
   },
