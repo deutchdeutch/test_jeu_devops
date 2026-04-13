@@ -68,3 +68,14 @@ export function distance(a: Vector, b: Vector): number {
     y: a.y - b.y
   });
 }
+
+// export function polarDistance(
+//     p1: { angle: number; radius: number },
+//     p2: { angle: number; radius: number }
+// ): number {
+//     const diffAngleDegree = p2.angle - p1.angle;
+//     const angleRad = diffAngleDegree * (Math.PI / 180);
+//     return Math.sqrt(
+// Math.pow(p1.radius, 2) +  Math.pow(p2.radius, 2) - 2 * p1.radius * p2.radius * Math.cos(angleRad)    );
+// }
+
