@@ -1,0 +1,58 @@
+name: CI - Two Ships
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_1_two_ships_passing_the_night
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Lint
+        id: lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Audit dependencies
+        id: audit
+        run: npm audit
+        continue-on-error: true
+
+      - name: Functional tests (Cypress)
+        run: npm run test:e2e
+
+      - name: Annotations & Summary
+        if: always()
+        run: |
+          if [ "${{ steps.lint.outcome }}" == "failure" ]; then
+            echo "::warning::Le lint a échoué — vérifiez le Google JS Style Guide"
+          fi
+          if [ "${{ steps.audit.outcome }}" == "failure" ]; then
+            echo "::warning::npm audit a détecté des vulnérabilités"
+          fi
+          echo "## Résultats CI - Two Ships" >> $GITHUB_STEP_SUMMARY
+          echo "Tests unitaires" >> $GITHUB_STEP_SUMMARY
+          echo "Lint lancé" >> $GITHUB_STEP_SUMMARY
+          echo "Npm audit" >> $GITHUB_STEP_SUMMARY
+          echo "Tests fonctionnels Cypress" >> $GITHUB_STEP_SUMMARY
