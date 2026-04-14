@@ -15,10 +15,21 @@ export default [
     },
     rules: {
       ...google.rules,
-      "indent": ["error", 2],
+      
+      "valid-jsdoc": "off",
       "require-jsdoc": "off",
-      "no-unused-vars": "warn",
-      "object-curly-spacing": ["error", "always"]
+      
+      // Tes préférences
+      "camelcase": "off",
+      "no-unused-vars": "off", 
+      "no-var": "warn",
+      "indent": "off",
+      "object-curly-spacing": "off",
+      "arrow-parens": "off",
+      "operator-linebreak": "off",
+      "max-len": "off",
+      "comma-dangle": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
     },
-  },
+  }
 ];

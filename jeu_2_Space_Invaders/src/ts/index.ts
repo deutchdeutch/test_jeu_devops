@@ -1,4 +1,4 @@
-import { log } from './debug';
+
 import { init as initInput, InputSource } from './input';
 import { init as initRenderer } from './render';
 import { init as initPhysics } from './physics';
@@ -22,7 +22,7 @@ const { getInput, setInputSource } = initInput(
     inputPause = false;
   }, () => {
     inputPause = true;
-  }
+  },
 );
 
 const { setGameOver } = initMenu(() => {
@@ -59,15 +59,15 @@ function update(time: number) {
     projectiles,
     enemies,
     particles,
-    gameOver
+    gameOver,
   } = calculate({
-    input, deltaTime, addPoints
+    input, deltaTime, addPoints,
   });
   draw({
     playerPosition,
     projectiles,
     enemies,
-    particles
+    particles,
   });
 
   if (gameOver) {
