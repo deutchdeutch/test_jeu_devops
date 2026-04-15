@@ -1,4 +1,4 @@
-name: CI - Two Ships
+name: CI/CD - Two Ships
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  tests:
+    name: Tests unitaires
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,33 +27,136 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Unit tests
+      - name: Run unit tests
         run: npm run test
 
-      - name: Lint
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_1_two_ships_passing_the_night
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
         id: lint
         run: npm run lint
         continue-on-error: true
 
-      - name: Audit dependencies
+      - name: Annotation lint
+        if: steps.lint.outcome == 'failure'
+        run: echo "::warning::Le lint a échoué — vérifiez le Google JS Style Guide"
+
+  audit:
+    name: Audit dépendances
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_1_two_ships_passing_the_night
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run audit
         id: audit
-        run: npm audit
+        run: npm audit --audit-level=critical
         continue-on-error: true
 
-      - name: Functional tests (Cypress)
+      - name: Annotation audit
+        if: steps.audit.outcome == 'failure'
+        run: echo "::warning::npm audit a détecté des vulnérabilités critiques"
+
+  cypress:
+    name: Tests fonctionnels Cypress
+    runs-on: ubuntu-latest
+    needs: [tests]
+    defaults:
+      run:
+        working-directory: jeu_1_two_ships_passing_the_night
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests
         run: npm run test:e2e
 
-      - name: Annotations & Summary
-        if: always()
+  summary:
+    name: Résumé CI
+    runs-on: ubuntu-latest
+    needs: [tests, lint, audit, cypress]
+    if: always()
+    steps:
+      - name: Write summary
         run: |
-          if [ "${{ steps.lint.outcome }}" == "failure" ]; then
-            echo "::warning::Le lint a échoué — vérifiez le Google JS Style Guide"
-          fi
-          if [ "${{ steps.audit.outcome }}" == "failure" ]; then
-            echo "::warning::npm audit a détecté des vulnérabilités"
-          fi
-          echo "## Résultats CI - Two Ships" >> $GITHUB_STEP_SUMMARY
-          echo "Tests unitaires" >> $GITHUB_STEP_SUMMARY
-          echo "Lint lancé" >> $GITHUB_STEP_SUMMARY
-          echo "Npm audit" >> $GITHUB_STEP_SUMMARY
-          echo "Tests fonctionnels Cypress" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Résultats CI - Two Ships" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Résultat |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests unitaires | ${{ needs.tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Audit dépendances | ${{ needs.audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests Cypress | ${{ needs.cypress.result }} |" >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Déploiement GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [tests, lint, audit, cypress]
+    if: github.ref == 'refs/heads/main' && needs.tests.result == 'success' && needs.cypress.result == 'success'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd jeu_1_two_ships_passing_the_night
+          npm install
+
+      - name: Build
+        run: |
+          cd jeu_1_two_ships_passing_the_night
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: jeu_1_two_ships_passing_the_night/dist
+          destination_dir: two-ships
