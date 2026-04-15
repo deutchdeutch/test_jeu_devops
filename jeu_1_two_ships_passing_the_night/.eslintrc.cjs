@@ -9,5 +9,16 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  rules: {},
+  rules: {
+    'camelcase': 'off',
+    'no-unused-vars': 'warn',
+    'no-var': 'warn',
+    'indent': 'off',
+    'object-curly-spacing': 'off',
+    'arrow-parens': 'off',
+    'operator-linebreak': 'off',
+    'one-var': 'off',
+    'max-len': 'off',
+    'comma-dangle': 'off',
+  },
 };

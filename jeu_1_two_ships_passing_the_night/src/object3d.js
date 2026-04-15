@@ -21,9 +21,9 @@ import {
   vec3_Z,
 } from './vec3.js';
 
-var _v1 = vec3_create();
-var _q1 = quat_create();
-var _m1 = mat4_create();
+const _v1 = vec3_create();
+const _q1 = quat_create();
+const _m1 = mat4_create();
 
 export var object3d_create = () => ({
   parent: undefined,
@@ -54,7 +54,7 @@ export var object3d_add = (parent, child) => {
 };
 
 export var object3d_remove = (parent, child) => {
-  var index = parent.children.indexOf(child);
+  const index = parent.children.indexOf(child);
   if (index >= 0) {
     parent.children.splice(index, 1);
   }

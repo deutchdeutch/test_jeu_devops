@@ -2,12 +2,12 @@ import { clamp } from './math.js';
 import { quat_create, quat_multiply, quat_setFromEuler } from './quat.js';
 import { vec3_create } from './vec3.js';
 
-var pitchQuat = quat_create();
-var yawQuat = quat_create();
+const pitchQuat = quat_create();
+const yawQuat = quat_create();
 
 export var controls_create = object => {
-  var pitchEuler = vec3_create();
-  var yawEuler = vec3_create();
+  const pitchEuler = vec3_create();
+  const yawEuler = vec3_create();
 
   var controls = {
     object,

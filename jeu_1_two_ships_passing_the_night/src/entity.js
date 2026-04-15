@@ -20,7 +20,7 @@ export var entity_filter = (entity, predicate) =>
   entity.components.filter(predicate);
 
 export var entity_remove = (entity, component) => {
-  var index = entity.components.indexOf(component);
+  const index = entity.components.indexOf(component);
 
   if (index >= 0) {
     entity.components

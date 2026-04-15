@@ -10,7 +10,7 @@ export var orthoCamera_create = (
   near = 0.1,
   far = 2000,
 ) => {
-  var camera = {
+  const camera = {
     ...object3d_create(),
     left,
     right,
@@ -29,15 +29,15 @@ export var orthoCamera_create = (
 };
 
 export var orthoCamera_updateProjectionMatrix = camera => {
-  var { left, right, top, bottom, near, far } = camera;
+  const { left, right, top, bottom, near, far } = camera;
 
-  var w = 1 / (right - left);
-  var h = 1 / (top - bottom);
-  var p = 1 / (far - near);
+  const w = 1 / (right - left);
+  const h = 1 / (top - bottom);
+  const p = 1 / (far - near);
 
-  var x = (right + left) * w;
-  var y = (top + bottom) * h;
-  var z = (far + near) * p;
+  const x = (right + left) * w;
+  const y = (top + bottom) * h;
+  const z = (far + near) * p;
 
   // prettier-ignore
   camera.projectionMatrix.set([

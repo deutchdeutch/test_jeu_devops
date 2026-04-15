@@ -1,6 +1,6 @@
 export var vec3_create = (x = 0, y = 0, z = 0) => ({ x, y, z });
 
-var _vector = vec3_create();
+const _vector = vec3_create();
 
 export var vec3_set = (v, x, y, z) => {
   v.x = x;
@@ -83,9 +83,9 @@ export var vec3_multiplyScalar = (v, scalar) => {
 };
 
 export var vec3_applyMatrix4 = (v, m) => {
-  var { x, y, z } = v;
+  const { x, y, z } = v;
 
-  var w = 1 / (m[3] * x + m[7] * y + m[11] * z + m[15]);
+  const w = 1 / (m[3] * x + m[7] * y + m[11] * z + m[15]);
 
   v.x = (m[0] * x + m[4] * y + m[8] * z + m[12]) * w;
   v.y = (m[1] * x + m[5] * y + m[9] * z + m[13]) * w;
@@ -95,18 +95,18 @@ export var vec3_applyMatrix4 = (v, m) => {
 };
 
 export var vec3_applyQuaternion = (v, q) => {
-  var { x, y, z } = v;
-  var qx = q.x,
+  const { x, y, z } = v;
+  const qx = q.x,
     qy = q.y,
     qz = q.z,
     qw = q.w;
 
   // calculate quat * vector
 
-  var ix = qw * x + qy * z - qz * y;
-  var iy = qw * y + qz * x - qx * z;
-  var iz = qw * z + qx * y - qy * x;
-  var iw = -qx * x - qy * y - qz * z;
+  const ix = qw * x + qy * z - qz * y;
+  const iy = qw * y + qz * x - qx * z;
+  const iz = qw * z + qx * y - qy * x;
+  const iw = -qx * x - qy * y - qz * z;
 
   // calculate result * inverse quat
 
@@ -121,7 +121,7 @@ export var vec3_transformDirection = (v, m) => {
   // input: THREE.Matrix4 affine matrix
   // vector interpreted as a direction
 
-  var { x, y, z } = v;
+  const { x, y, z } = v;
 
   v.x = m[0] * x + m[4] * y + m[8] * z;
   v.y = m[1] * x + m[5] * y + m[9] * z;
@@ -181,7 +181,7 @@ export var vec3_lerpVectors = (v, a, b, t) =>
   vec3_add(vec3_multiplyScalar(vec3_subVectors(v, b, a), t), a);
 
 export var vec3_cross = (a, b) => {
-  var { x, y, z } = a;
+  const { x, y, z } = a;
 
   a.x = y * b.z - z * b.y;
   a.y = z * b.x - x * b.z;
@@ -191,13 +191,13 @@ export var vec3_cross = (a, b) => {
 };
 
 export var vec3_crossVectors = (v, a, b) => {
-  var ax = a.x;
-  var ay = a.y;
-  var az = a.z;
+  const ax = a.x;
+  const ay = a.y;
+  const az = a.z;
 
-  var bx = b.x;
-  var by = b.y;
-  var bz = b.z;
+  const bx = b.x;
+  const by = b.y;
+  const bz = b.z;
 
   v.x = ay * bz - az * by;
   v.y = az * bx - ax * bz;
@@ -220,7 +220,7 @@ export var vec3_reflect = (v, normal) =>
 export var vec3_distanceTo = (a, b) => Math.sqrt(vec3_distanceToSquared(a, b));
 
 export var vec3_distanceToSquared = (a, b) => {
-  var dx = a.x - b.x,
+  const dx = a.x - b.x,
     dy = a.y - b.y,
     dz = a.z - b.z;
   return dx * dx + dy * dy + dz * dz;
@@ -251,7 +251,7 @@ export var OVERCLIP = 1.001;
 
 // Slide off of the impacting surface
 export var pm_clipVelocity = (vector, normal, overbounce) => {
-  var backoff = vec3_dot(vector, normal);
+  let backoff = vec3_dot(vector, normal);
 
   if (backoff < 0) {
     backoff *= overbounce;

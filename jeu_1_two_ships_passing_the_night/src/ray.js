@@ -13,16 +13,16 @@ import {
   vec3_transformDirection,
 } from './vec3.js';
 
-var _diff = vec3_create();
+const _diff = vec3_create();
 
-var _edge1 = vec3_create();
-var _edge2 = vec3_create();
-var _normal = vec3_create();
+const _edge1 = vec3_create();
+const _edge2 = vec3_create();
+const _normal = vec3_create();
 
 // Mesh scope variables.
-var _inverseMatrix = mat4_create();
+const _inverseMatrix = mat4_create();
 
-var _intersectionPoint = vec3_create();
+const _intersectionPoint = vec3_create();
 
 export var ray_create = (
   origin = vec3_create(),
@@ -45,16 +45,16 @@ export var ray_at = (ray, t, target = vec3_create()) =>
   );
 
 export var ray_intersectBox = (ray, box, target) => {
-  var { origin, direction } = ray;
+  const { origin, direction } = ray;
 
-  var txmin = (box.min.x - origin.x) / direction.x;
-  var txmax = (box.max.x - origin.x) / direction.x;
+  let txmin = (box.min.x - origin.x) / direction.x;
+  let txmax = (box.max.x - origin.x) / direction.x;
   if (txmin > txmax) {
     [txmin, txmax] = [txmax, txmin];
   }
 
-  var tymin = (box.min.y - origin.y) / direction.y;
-  var tymax = (box.max.y - origin.y) / direction.y;
+  let tymin = (box.min.y - origin.y) / direction.y;
+  let tymax = (box.max.y - origin.y) / direction.y;
   if (tymin > tymax) {
     [tymin, tymax] = [tymax, tymin];
   }
@@ -64,11 +64,11 @@ export var ray_intersectBox = (ray, box, target) => {
   }
 
   // Math.min/max with NaN support (0 / 0).
-  var tmin = tymin > txmin || txmin !== txmin ? tymin : txmin;
-  var tmax = tymax < txmax || txmax !== txmax ? tymax : txmax;
+  let tmin = tymin > txmin || txmin !== txmin ? tymin : txmin;
+  let tmax = tymax < txmax || txmax !== txmax ? tymax : txmax;
 
-  var tzmin = (box.min.z - origin.z) / direction.z;
-  var tzmax = (box.max.z - origin.z) / direction.z;
+  let tzmin = (box.min.z - origin.z) / direction.z;
+  let tzmax = (box.max.z - origin.z) / direction.z;
   if (tzmin > tzmax) {
     [tzmin, tzmax] = [tzmax, tzmin];
   }
@@ -101,8 +101,8 @@ export var ray_intersectTriangle = (ray, a, b, c, target) => {
   //   |Dot(D,N)|*b1 = sign(Dot(D,N))*Dot(D,Cross(Q,E2))
   //   |Dot(D,N)|*b2 = sign(Dot(D,N))*Dot(D,Cross(E1,Q))
   //   |Dot(D,N)|*t = -sign(Dot(D,N))*Dot(Q,N)
-  var DdN = vec3_dot(ray.direction, _normal);
-  var sign = 1;
+  let DdN = vec3_dot(ray.direction, _normal);
+  let sign = 1;
 
   if (DdN > 0) {
     return;
@@ -114,7 +114,7 @@ export var ray_intersectTriangle = (ray, a, b, c, target) => {
   }
 
   vec3_subVectors(_diff, ray.origin, a);
-  var DdQxE2 =
+  const DdQxE2 =
     sign * vec3_dot(ray.direction, vec3_crossVectors(_edge2, _diff, _edge2));
 
   // b1 < 0, no intersection
@@ -122,7 +122,7 @@ export var ray_intersectTriangle = (ray, a, b, c, target) => {
     return;
   }
 
-  var DdE1xQ = sign * vec3_dot(ray.direction, vec3_cross(_edge1, _diff));
+  const DdE1xQ = sign * vec3_dot(ray.direction, vec3_cross(_edge1, _diff));
 
   // b2 < 0, no intersection
   if (DdE1xQ < 0) {
@@ -135,7 +135,7 @@ export var ray_intersectTriangle = (ray, a, b, c, target) => {
   }
 
   // Line intersects triangle, check if ray does.
-  var QdN = -sign * vec3_dot(_diff, _normal);
+  const QdN = -sign * vec3_dot(_diff, _normal);
 
   // t < 0, no intersection
   if (QdN < 0) {
@@ -146,8 +146,8 @@ export var ray_intersectTriangle = (ray, a, b, c, target) => {
   return ray_at(ray, QdN / DdN, target);
 };
 
-var checkIntersection = (object, ray, a, b, c, point) => {
-  var intersect = ray_intersectTriangle(ray, a, b, c, point);
+const checkIntersection = (object, ray, a, b, c, point) => {
+  const intersect = ray_intersectTriangle(ray, a, b, c, point);
   if (!intersect) {
     return;
   }
@@ -155,22 +155,22 @@ var checkIntersection = (object, ray, a, b, c, point) => {
   return vec3_applyMatrix4(vec3_clone(point), object.matrixWorld);
 };
 
-var _ray = ray_create();
+const _ray = ray_create();
 
 export var ray_intersectMesh = (ray, object) => {
-  var intersections = [];
+  const intersections = [];
 
   _inverseMatrix.set(object.matrixWorld);
   ray_applyMatrix4(ray_copy(_ray, ray), mat4_invert(_inverseMatrix));
 
-  var { vertices, faces } = object.geometry;
+  const { vertices, faces } = object.geometry;
 
   faces.map((face, faceIndex) => {
-    var a = vertices[face.a];
-    var b = vertices[face.b];
-    var c = vertices[face.c];
+    const a = vertices[face.a];
+    const b = vertices[face.b];
+    const c = vertices[face.c];
 
-    var point = checkIntersection(object, _ray, a, b, c, _intersectionPoint);
+    const point = checkIntersection(object, _ray, a, b, c, _intersectionPoint);
     if (point) {
       intersections.push({
         point,

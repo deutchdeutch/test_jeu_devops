@@ -18,7 +18,7 @@ export var setFaceVertexColor = (face, index, color) => {
 
 export var applyBoxVertexColors = (geom, ...colors) => {
   colors.map(([indices, value]) => {
-    var color = vec3_create();
+    const color = vec3_create();
     setVector(color, value);
     geom.faces.map(face =>
       indices.map(index => setFaceVertexColor(face, index, color)),

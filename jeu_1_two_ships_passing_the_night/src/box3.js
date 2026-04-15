@@ -11,7 +11,7 @@ import {
   vec3_subVectors,
 } from './vec3.js';
 
-var _vector = vec3_create();
+const _vector = vec3_create();
 
 export var box3_create = (
   min = vec3_create(Infinity, Infinity, Infinity),

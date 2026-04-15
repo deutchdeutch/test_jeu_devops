@@ -3,7 +3,7 @@ import { mat4_create, mat4_multiplyMatrices } from './mat4.js';
 import { orthoCamera_create } from './orthoCamera.js';
 import { vec3_create, vec3_setFromMatrixPosition } from './vec3.js';
 
-var _lookTarget = vec3_create();
+const _lookTarget = vec3_create();
 
 export var lightShadow_create = () => ({
   camera: orthoCamera_create(-5, 5, 5, -5, 0.5, 500),
@@ -11,7 +11,7 @@ export var lightShadow_create = () => ({
 });
 
 export var lightShadow_updateMatrices = (lightShadow, light) => {
-  var { camera, matrix } = lightShadow;
+  const { camera, matrix } = lightShadow;
 
   vec3_setFromMatrixPosition(camera.position, light.matrixWorld);
 
