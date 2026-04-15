@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import { GAMEPAD_EPSILON, PLAYER_SPEED, FIRE_COOLDOWN, PROJECTILE_SPEED, PROJECTILE_SIZE, ENEMY_SIZE, PLAYER_OFFSET, PARTICLE_LIFESPAN, CENTER_RADIUS, WORLD_SIZE, ENEMY_SPAWN_COOLDOWN } from './config';
 import { advanceEnemy, createEnemy, Enemy, Type, getValue } from './enemy';
 import { Input } from './input';
@@ -26,21 +27,21 @@ export interface PhysicsOutput {
 
 let currentPosition: Vector = {
   x: 0,
-  y: 1
+  y: 1,
 };
 
 let destination: Vector = {
   x: 0,
-  y: 1
+  y: 1,
 };
 
 let gameOver = false;
 
-const particles: Particle[] = [];
+export const particles: Particle[] = [];
 
-const projectiles: Projectile[] = [];
+export const projectiles: Projectile[] = [];
 
-const enemies: Enemy[] = [
+export const enemies: Enemy[] = [
   createEnemy(Type.Basic),
 ];
 
@@ -50,11 +51,11 @@ let spawnTimer = 0;
 
 export function init() {
   return {
-    calculate
+    calculate,
   };
 }
 
-function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput {
+export function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput {
   for (const pKey in particles) {
     const particle = particles[pKey];
     particle.age += deltaTime;
@@ -78,8 +79,8 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
     if (input.fire && fireTimer > FIRE_COOLDOWN) {
       fireTimer = 0;
       projectiles.push({
-        position: { ...toPolarVector(mulFactor(currentPosition, 50)) }
-      })
+        position: { ...toPolarVector(mulFactor(currentPosition, 50)) },
+      });
     }
 
     spawnTimer += deltaTime;
@@ -91,8 +92,8 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
       enemies.push(
         createEnemy(
           types[Math.random() * types.length | 0],
-          { angle, radius: WORLD_SIZE / 2 }
-        )
+          { angle, radius: WORLD_SIZE / 2 },
+        ),
       );
     }
 
@@ -112,7 +113,7 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
         gameOver = true;
         for (let i = 0; i < 10; i += 1) {
           setTimeout(() => particles.push(
-            ...createBoom({ x: WORLD_SIZE / 2, y: WORLD_SIZE / 2 }, 4 + i * 4 )
+            ...createBoom({ x: WORLD_SIZE / 2, y: WORLD_SIZE / 2 }, 4 + i * 4 ),
           ), 100 * i);
         }
         break;
@@ -130,7 +131,7 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
           enemies.splice(+eKey, 1);
           const position = toRelativeVector(enemy.position);
           particles.push(
-            ...createBoom(position)
+            ...createBoom(position),
           );
           addPoints(getValue(enemy.type));
           continue projectiles;
@@ -144,6 +145,7 @@ function calculate({ input, deltaTime, addPoints }: PhysicsData): PhysicsOutput 
     projectiles,
     enemies,
     particles,
-    gameOver
+    gameOver,
   };
 }
+
