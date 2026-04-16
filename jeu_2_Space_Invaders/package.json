@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "parcel ./src/index.html",
-    "build": "parcel build src/index.html --dist-dir build --no-source-maps",
+    "build": "parcel build src/index.html --dist-dir build --no-source-maps --public-url /jeux_videops/space-invaders/",
     "zip": "rm -f bundle.zip && cd build && bestzip ../bundle.zip *",
     "bundle": "yarn build && yarn zip",
     "test": "jest",
