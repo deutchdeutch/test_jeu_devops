@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "types": ["jest", "node"],
     "esModuleInterop": true,
-    "moduleResolution": "node",
     "target": "ESNext",
-    "types": ["jest", "node"]
-  }
+    "lib": ["ESNext", "DOM"]
+  },
+  "exclude": ["cypress", "cypress.config.js"]
 }
