@@ -155,3 +155,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: jeu_1_two_ships_passing_the_night/dist
           destination_dir: two-ships
+          keep_files: true
+      
+      - name: Deploy site presentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          exclude_assets: '.github,jeu_1_two_ships_passing_the_night,jeu_2_Space_Invaders,README.md,docker-compose.yml,Dockerfile'
+          keep_files: true

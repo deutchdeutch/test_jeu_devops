@@ -5,4 +5,5 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
+  base: '/jeux_videops/two-ships/',
 });
