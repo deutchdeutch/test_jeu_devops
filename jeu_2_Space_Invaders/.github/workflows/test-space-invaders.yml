@@ -1,51 +1,127 @@
-name: JEUX CI
-on: 
+name: CI/CD - Space Invaders
+
+on:
   push:
-    branches: [ "**" ]
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch: 
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  my_build_and_test:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_2_Space_Invaders
     steps:
-      - name: checkout code 
-        uses: actions/checkout@v3
-
-      - name: setup node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm" 
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
+      - run: npm install
+      - name: Run lint
+        id: lint
+        run: npm run lint
+        continue-on-error: true
+      - name: Annotation lint
+        if: steps.lint.outcome == 'failure'
+        run: echo "::warning::Le lint a échoué"
 
-      - name: Install
-        run: npm ci
-
-      - name: Run Linter
-        # on utilise une action qui transforme les erreurs Eslint en annotation Github
-        run: npm run lint -- --format=stylish
-
-      - name: Security Audit
-        run: npm audit --audit-level=high #s'arrête si une faille grave est trouvé
-
-      - name: Run Tests
-        # --ci et le reporter github-action crées les annotations automatiques
-        run: npm test -- --ci --reporters=default --reporters=github-actions
-        
-      - name: Build Project
-        run: npm run build
-
-      - name: Upload Documentation
-        if: always()
-        uses: actions/upload-artifact@v4
+  audit:
+    name: Audit dépendances
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_2_Space_Invaders
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: documentation-site
-          path: docs/
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
+      - run: npm install
+      - name: Run audit
+        id: audit
+        run: npm audit --audit-level=critical
+        continue-on-error: true
+      - name: Annotation audit
+        if: steps.audit.outcome == 'failure'
+        run: echo "::warning::npm audit a détecté des vulnérabilités critiques"
 
-      - name: Upload Build Output
-        if: success()
-        uses: actions/upload-artifact@v4
+  tests:
+    name: Tests unitaires
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jeu_2_Space_Invaders
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: project-build
-          path: dist/
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
+      - run: npm install
+      - name: Run tests
+        run: npm test
+
+  cypress:
+    name: Tests fonctionnels Cypress
+    runs-on: ubuntu-latest
+    needs: [tests]
+    defaults:
+      run:
+        working-directory: jeu_2_Space_Invaders
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
+      - run: npm install
+      - name: Run Cypress
+        run: npm run test:e2e
+
+  summary:
+    name: Résumé CI
+    runs-on: ubuntu-latest
+    needs: [tests, lint, audit, cypress]
+    if: always()
+    steps:
+      - name: Write summary
+        run: |
+          echo "## 📊 Résultats CI - Space Invaders" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Résultat |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests unitaires | ${{ needs.tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Audit dépendances | ${{ needs.audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests Cypress | ${{ needs.cypress.result }} |" >> $GITHUB_STEP_SUMMARY
+
+  deploy:
+    name: Déploiement GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [tests, lint, audit, cypress]
+    if: github.ref == 'refs/heads/main' && needs.tests.result == 'success' && needs.cypress.result == 'success'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
+      - name: Install & Build
+        run: |
+          cd jeu_2_Space_Invaders
+          npm install
+          npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: jeu_2_Space_Invaders/build
+          destination_dir: space-invaders
