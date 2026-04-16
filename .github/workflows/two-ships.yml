@@ -104,7 +104,7 @@ jobs:
         with:
           working-directory: jeu_1_two_ships_passing_the_night
           start: npm run dev
-          wait-on: 'http://localhost:3000'
+          wait-on: 'http://localhost:5173'
           wait-on-timeout: 60
 
   summary:
