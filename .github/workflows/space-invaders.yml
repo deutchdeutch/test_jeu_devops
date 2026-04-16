@@ -84,8 +84,12 @@ jobs:
           cache: npm
           cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
       - run: npm install
-      - name: Run Cypress
-        run: npx cypress run
+      - name: Start Parcel server
+        run: npx parcel ./src/index.html --port 1234 &
+      - name: Wait for server
+        run: npx wait-on http://127.0.0.1:1234 --timeout 120000
+      - name: Run Cypress tests
+        run: npx cypress run --config baseUrl=http://127.0.0.1:1234
 
   summary:
     name: Résumé CI
