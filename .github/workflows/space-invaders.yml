@@ -85,7 +85,7 @@ jobs:
           cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
       - run: npm install
       - name: Run Cypress
-        run: npm run test:e2e
+        run: npx cypress run
 
   summary:
     name: Résumé CI

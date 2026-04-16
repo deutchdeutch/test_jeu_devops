@@ -5,7 +5,8 @@
     "zip": "rm -f bundle.zip && cd build && bestzip ../bundle.zip *",
     "bundle": "yarn build && yarn zip",
     "test": "jest",
-    "lint": "eslint \"src/**/*.ts\""
+    "lint": "eslint \"src/**/*.ts\"",
+    "test:e2e": "cypress run"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.16.4",
