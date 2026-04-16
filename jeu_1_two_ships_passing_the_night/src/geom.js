@@ -9,7 +9,7 @@ import {
   vec3_set,
 } from './vec3.js';
 
-var _vector = vec3_create();
+const _vector = vec3_create();
 
 export var geom_create = () => ({
   vertices: [],
@@ -17,7 +17,7 @@ export var geom_create = () => ({
 });
 
 export var geom_push = (geom, vertices, faces) => {
-  var offset = geom.vertices.length;
+  const offset = geom.vertices.length;
 
   for (var i = 0; i < vertices.length; ) {
     geom.vertices.push(
@@ -56,13 +56,13 @@ export var geom_scale = (geom, x, y, z) => {
 };
 
 export var geom_merge = (a, b) => {
-  var vertexOffset = a.vertices.length;
+  const vertexOffset = a.vertices.length;
 
   a.vertices.push(...b.vertices.map(vec3_clone));
 
   a.faces.push(
     ...b.faces.map(face => {
-      var faceCopy = face3_clone(face);
+      const faceCopy = face3_clone(face);
       faceCopy.a += vertexOffset;
       faceCopy.b += vertexOffset;
       faceCopy.c += vertexOffset;
@@ -74,7 +74,7 @@ export var geom_merge = (a, b) => {
 };
 
 export var geom_clone = geom => {
-  var clone = geom_create();
+  const clone = geom_create();
   clone.vertices = geom.vertices.map(vec3_clone);
   clone.faces = geom.faces.map(face3_clone);
   return clone;

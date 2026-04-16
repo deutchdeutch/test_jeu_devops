@@ -35,39 +35,39 @@ import {
   vec3_transformDirection,
 } from './vec3.js';
 
-var gl = canvas.getContext('webgl2');
+const gl = canvas.getContext('webgl2');
 
 gl.clearColor(0, 0, 0, 0);
 gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.CULL_FACE);
 gl.depthFunc(gl.LEQUAL);
 
-var running = false;
+let running = false;
 
 // Scene
-var scene = object3d_create();
+const scene = object3d_create();
 scene.fogColor = vec3_create();
 scene.fogNear = 1;
 scene.fogFar = 1000;
 
 // Camera
-var camera = camera_create(90);
+const camera = camera_create(90);
 pointerLock_create(controls_create(camera), canvas);
 
-var { ambient, directional } = map0(gl, scene, camera);
+const { ambient, directional } = map0(gl, scene, camera);
 
 // Shader
-var program = createShaderProgram(gl, vert, frag);
-var depthProgram = createShaderProgram(gl, depthVert, depthFrag);
+const program = createShaderProgram(gl, vert, frag);
+const depthProgram = createShaderProgram(gl, depthVert, depthFrag);
 
-var attributes = getAttributeLocations(gl, program);
-var uniforms = getUniformLocations(gl, program);
+const attributes = getAttributeLocations(gl, program);
+const uniforms = getUniformLocations(gl, program);
 
-var depthAttributes = getAttributeLocations(gl, depthProgram);
-var depthUniforms = getUniformLocations(gl, depthProgram);
+const depthAttributes = getAttributeLocations(gl, depthProgram);
+const depthUniforms = getUniformLocations(gl, depthProgram);
 
-var depthTexture = gl.createTexture();
-var depthTextureSize = 1024;
+const depthTexture = gl.createTexture();
+const depthTextureSize = 1024;
 gl.bindTexture(gl.TEXTURE_2D, depthTexture);
 gl.texImage2D(
   gl.TEXTURE_2D,
@@ -85,7 +85,7 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-var depthFramebuffer = gl.createFramebuffer();
+const depthFramebuffer = gl.createFramebuffer();
 gl.bindFramebuffer(gl.FRAMEBUFFER, depthFramebuffer);
 gl.framebufferTexture2D(
   gl.FRAMEBUFFER,
@@ -95,7 +95,7 @@ gl.framebufferTexture2D(
   0,
 );
 
-var renderBuffer = gl.createRenderbuffer();
+const renderBuffer = gl.createRenderbuffer();
 gl.bindRenderbuffer(gl.RENDERBUFFER, renderBuffer);
 gl.renderbufferStorage(
   gl.RENDERBUFFER,
@@ -110,17 +110,17 @@ gl.framebufferRenderbuffer(
   renderBuffer,
 );
 
-var dt = 1 / 60;
-var accumulatedTime = dt;
-var previousTime;
+const dt = 1 / 60;
+let accumulatedTime = dt;
+let previousTime;
 
-var update = () => {
-  var time = (performance.now() || 0) * 1e-3;
+const update = () => {
+  const time = (performance.now() || 0) * 1e-3;
   if (!previousTime) {
     previousTime = time;
   }
 
-  var frameTime = Math.min(time - previousTime, 0.1);
+  const frameTime = Math.min(time - previousTime, 0.1);
   accumulatedTime += frameTime;
   previousTime = time;
 
@@ -133,28 +133,28 @@ var update = () => {
   }
 };
 
-var bufferGeomBuffers = new WeakMap();
+const bufferGeomBuffers = new WeakMap();
 
-var setFloat32AttributeBuffer = (name, location, bufferGeom, size) => {
-  var buffers = bufferGeomBuffers.get(bufferGeom) || {};
+const setFloat32AttributeBuffer = (name, location, bufferGeom, size) => {
+  const buffers = bufferGeomBuffers.get(bufferGeom) || {};
   bufferGeomBuffers.set(bufferGeom, buffers);
 
-  var buffer = buffers[name] || createFloat32Buffer(gl, bufferGeom[name]);
+  const buffer = buffers[name] || createFloat32Buffer(gl, bufferGeom[name]);
   buffers[name] = buffer;
 
   setFloat32Attribute(gl, location, buffer, size);
 };
 
-var bufferGeoms = new WeakMap();
+const bufferGeoms = new WeakMap();
 
-var getBufferGeom = geometry => {
-  var bufferGeom = bufferGeoms.get(geometry) || bufferGeom_fromGeom(geometry);
+const getBufferGeom = geometry => {
+  const bufferGeom = bufferGeoms.get(geometry) || bufferGeom_fromGeom(geometry);
   bufferGeoms.set(geometry, bufferGeom);
   return bufferGeom;
 };
 
-var renderShadow = mesh => {
-  var { geometry } = mesh;
+const renderShadow = mesh => {
+  const { geometry } = mesh;
 
   setMat4Uniform(
     gl,
@@ -171,7 +171,7 @@ var renderShadow = mesh => {
     directional.shadow.camera.projectionMatrix,
   );
 
-  var bufferGeom = getBufferGeom(geometry);
+  const bufferGeom = getBufferGeom(geometry);
 
   setFloat32AttributeBuffer(
     'position',
@@ -183,8 +183,8 @@ var renderShadow = mesh => {
   gl.drawArrays(gl.TRIANGLES, 0, bufferGeom.position.length / 3);
 };
 
-var renderMesh = mesh => {
-  var { geometry, material } = mesh;
+const renderMesh = mesh => {
+  const { geometry, material } = mesh;
 
   gl.uniform1i(uniforms.fog, material.fog);
   setVec3Uniform(gl, uniforms.fogColor, scene.fogColor);
@@ -209,7 +209,7 @@ var renderMesh = mesh => {
   );
   setMat4Uniform(gl, uniforms.projectionMatrix, camera.projectionMatrix);
 
-  var bufferGeom = getBufferGeom(geometry);
+  const bufferGeom = getBufferGeom(geometry);
 
   setFloat32AttributeBuffer('position', attributes.position, bufferGeom, 3);
   setFloat32AttributeBuffer('color', attributes.color, bufferGeom, 3);
@@ -217,10 +217,10 @@ var renderMesh = mesh => {
   gl.drawArrays(gl.TRIANGLES, 0, bufferGeom.position.length / 3);
 };
 
-var vector3 = vec3_create();
-var direction = vec3_create();
+const vector3 = vec3_create();
+const direction = vec3_create();
 
-var render = () => {
+const render = () => {
   object3d_updateWorldMatrix(scene);
   camera.matrixWorldInverse.set(camera.matrixWorld);
   mat4_invert(camera.matrixWorldInverse);
@@ -260,7 +260,7 @@ var render = () => {
     camera.matrixWorldInverse,
   );
 
-  var color = vec3_multiplyScalar(
+  const color = vec3_multiplyScalar(
     Object.assign(vector3, directional.color),
     directional.intensity,
   );
@@ -290,7 +290,7 @@ var animate = () => {
   }
 };
 
-var setSize = (width, height) => {
+const setSize = (width, height) => {
   canvas.width = width * devicePixelRatio;
   canvas.height = height * devicePixelRatio;
   canvas.style.width = width + 'px';

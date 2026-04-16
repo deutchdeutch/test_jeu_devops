@@ -4,7 +4,7 @@ export var flow = (...fns) => initialValue =>
 export var rearg = fn => (...args) => value => fn(value, ...args);
 
 export var remove = (array, element) => {
-  var index = array.indexOf(element);
+  const index = array.indexOf(element);
   if (index >= 0) array.splice(index, 1);
 };
 

@@ -1,8 +1,8 @@
 import { bufferAttr_copyVector3sArray } from './bufferAttr.js';
 
 export var bufferGeom_fromGeom = geom => {
-  var vertices = [];
-  var colors = [];
+  const vertices = [];
+  const colors = [];
 
   geom.faces.map(face => {
     vertices.push(
@@ -11,7 +11,7 @@ export var bufferGeom_fromGeom = geom => {
       geom.vertices[face.c],
     );
 
-    var { color, vertexColors } = face;
+    const { color, vertexColors } = face;
     if (vertexColors.length === 3) {
       colors.push(...vertexColors);
     } else {

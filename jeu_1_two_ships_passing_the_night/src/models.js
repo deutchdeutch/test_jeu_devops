@@ -76,10 +76,10 @@ import {
   vec3_Y,
 } from './vec3.js';
 
-var EPSILON = 1e-2;
+const EPSILON = 1e-2;
 
-var _quat = quat_create();
-var _vector = vec3_create();
+const _quat = quat_create();
+const _vector = vec3_create();
 
 export var box = (dimensions, ...transforms) =>
   flow(...transforms)(boxGeom_create(...dimensions));
@@ -87,14 +87,14 @@ export var box = (dimensions, ...transforms) =>
 export var mergeAll = (...geoms) => flow(...geoms.map(merge))(geom_create());
 
 export var spaceBetween = (start, end, count) => {
-  var spacing = (end - start) / (count + 1);
+  const spacing = (end - start) / (count + 1);
   return [...Array(count)].map((_, index) => start + spacing * (index + 1));
 };
 
 export var bridge_create = (start, end, width, height) => {
   vec3_subVectors(_vector, end, start);
-  var dx = _vector.x;
-  var dz = _vector.z;
+  const dx = _vector.x;
+  const dz = _vector.z;
 
   if (DEBUG && (dx < 0 || dz < 0)) {
     throw new Error('bridge_create: start is after end');
@@ -112,16 +112,16 @@ export var column_create = (
   columnHeight,
   columnDepth = columnWidth,
 ) => {
-  var base = box(
+  const base = box(
     [columnDepth, (3 / 16) * columnHeight, columnWidth],
     align(ny),
   );
-  var middle = flow(
+  const middle = flow(
     () => extrude(base, py, { y: (3 / 4) * columnHeight }),
     $translateX([px_py, -columnDepth / 2]),
     deleteFaces(face_ny),
   )();
-  var top = flow(
+  const top = flow(
     () => extrude(middle, py, { y: (1 / 16) * columnHeight }),
     $translateX([px_py, -columnDepth / 2]),
     deleteFaces(face_ny),
@@ -130,22 +130,22 @@ export var column_create = (
   return mergeAll(base, middle, top);
 };
 
-var disintegrationGeometry = boxGeom_create(1, 1, 1);
-var disintegrationMaterial = material_create();
+const disintegrationGeometry = boxGeom_create(1, 1, 1);
+const disintegrationMaterial = material_create();
 vec3_setScalar(disintegrationMaterial.emissive, 1);
 
-var disintegrationCoreMaterial = material_create();
+const disintegrationCoreMaterial = material_create();
 vec3_setScalar(disintegrationCoreMaterial.color, 0);
 
 export var disintegration_create = (boundingBox, count) => {
-  var disintegration = object3d_create();
-  var decay = 5;
-  var center = box3_getCenter(boundingBox, vec3_create());
-  var size = box3_getSize(boundingBox, vec3_create());
-  var strokeWidth = 2;
+  const disintegration = object3d_create();
+  const decay = 5;
+  const center = box3_getCenter(boundingBox, vec3_create());
+  const size = box3_getSize(boundingBox, vec3_create());
+  const strokeWidth = 2;
 
-  var velocities = [...Array(count)].map(() => {
-    var sprite = mesh_create(disintegrationGeometry, disintegrationMaterial);
+  const velocities = [...Array(count)].map(() => {
+    const sprite = mesh_create(disintegrationGeometry, disintegrationMaterial);
     sprite.castShadow = true;
     vec3_set(
       sprite.scale,
@@ -159,7 +159,7 @@ export var disintegration_create = (boundingBox, count) => {
       randFloatSpread(0.5),
       randFloatSpread(0.5),
     );
-    var spriteCore = mesh_create(
+    const spriteCore = mesh_create(
       disintegrationGeometry,
       disintegrationCoreMaterial,
     );
@@ -179,7 +179,7 @@ export var disintegration_create = (boundingBox, count) => {
   return entity_add(
     disintegration,
     component_create(dt => {
-      var visibleCount = 0;
+      let visibleCount = 0;
 
       disintegration.children.map((sprite, index) => {
         vec3_addScaledVector(sprite.position, velocities[index], dt);
@@ -198,57 +198,57 @@ export var disintegration_create = (boundingBox, count) => {
 };
 
 export var dreadnought_create = () => {
-  var frontLength = 12288;
-  var width = 3072;
+  const frontLength = 12288;
+  const width = 3072;
 
-  var sideGap = 512;
-  var sideWidth = (width - sideGap) / 2;
+  const sideGap = 512;
+  const sideWidth = (width - sideGap) / 2;
 
-  var deckHeight = 128;
-  var centerHeight = 512;
-  var slopeWidth = (5 / 6) * sideWidth;
+  const deckHeight = 128;
+  const centerHeight = 512;
+  const slopeWidth = (5 / 6) * sideWidth;
 
-  var coreWidth = 1.5 * sideGap;
-  var coreHeight = 0.75 * centerHeight;
-  var coreLength = 3072;
+  const coreWidth = 1.5 * sideGap;
+  const coreHeight = 0.75 * centerHeight;
+  const coreLength = 3072;
 
-  var frontRightDeck = box(
+  const frontRightDeck = box(
     [sideWidth, deckHeight, frontLength],
     align(px),
     $translateX([nx_pz, slopeWidth], [all, -sideGap / 2]),
     $translate([ny_pz, { y: deckHeight }]),
     deleteFaces(face_py),
   );
-  var frontRightCenter = flow(
+  const frontRightCenter = flow(
     () => extrude(frontRightDeck, py, { y: centerHeight }),
     $translate([nx_nz, { x: slopeWidth }], [py_pz, { y: -centerHeight }]),
     deleteFaces(face_nx, face_ny),
   )();
-  var frontRightSlope = flow(
+  const frontRightSlope = flow(
     () => extrude(frontRightCenter, nx, { x: -slopeWidth }),
     $translate([nx_pz, { x: slopeWidth }], [nx_py_nz, { y: -centerHeight }]),
     deleteFaces(face_px, face_ny),
   )();
 
-  var frontLeftDeck = box(
+  const frontLeftDeck = box(
     [sideWidth, deckHeight, frontLength],
     align(nx),
     $translateX([px_pz, -slopeWidth], [all, sideGap / 2]),
     $translate([ny_pz, { y: deckHeight }]),
     deleteFaces(face_py),
   );
-  var frontLeftCenter = flow(
+  const frontLeftCenter = flow(
     () => extrude(frontLeftDeck, py, { y: centerHeight }),
     $translate([px_nz, { x: -slopeWidth }], [py_pz, { y: -centerHeight }]),
     deleteFaces(face_px, face_ny),
   )();
-  var frontLeftSlope = flow(
+  const frontLeftSlope = flow(
     () => extrude(frontLeftCenter, px, { x: slopeWidth }),
     $translate([px_pz, { x: -slopeWidth }], [px_py_nz, { y: -centerHeight }]),
     deleteFaces(face_nx, face_ny),
   )();
 
-  var geom = mergeAll(
+  const geom = mergeAll(
     frontRightDeck,
     frontRightCenter,
     frontRightSlope,
@@ -276,24 +276,24 @@ export var dreadnought_create = () => {
   );
 };
 
-var explosionGeometry = box([0.5, 0.5, 1]);
-var explosionMaterials = [
+const explosionGeometry = box([0.5, 0.5, 1]);
+const explosionMaterials = [
   [1, 1, 1],
   [1, 0.75, 0],
   [1, 0.5, 0],
 ].map(color => {
-  var material = material_create();
+  const material = material_create();
   vec3_set(material.color, ...color);
   vec3_set(material.emissive, ...color);
   return material;
 });
 
 export var explosion_create = count => {
-  var explosion = object3d_create();
-  var decay = 8;
+  const explosion = object3d_create();
+  const decay = 8;
 
-  var velocities = [...Array(count)].map(() => {
-    var sprite = mesh_create(explosionGeometry, sample(explosionMaterials));
+  const velocities = [...Array(count)].map(() => {
+    const sprite = mesh_create(explosionGeometry, sample(explosionMaterials));
     sprite.castShadow = true;
     vec3_setScalar(sprite.scale, randFloat(1, 8));
     vec3_set(
@@ -303,7 +303,7 @@ export var explosion_create = count => {
       randFloatSpread(4),
     );
     object3d_add(explosion, sprite);
-    var velocity = vec3_setLength(
+    const velocity = vec3_setLength(
       vec3_clone(sprite.position),
       randFloat(64, 128),
     );
@@ -314,7 +314,7 @@ export var explosion_create = count => {
   return entity_add(
     explosion,
     component_create(dt => {
-      var visibleCount = 0;
+      let visibleCount = 0;
 
       explosion.children.map((sprite, index) => {
         vec3_addScaledVector(
@@ -337,31 +337,31 @@ export var explosion_create = count => {
 };
 
 export var greeble_create = (() => {
-  var _v0 = vec3_create();
-  var _v1 = vec3_create();
-  var _matrix = mat4_create();
-  var origin = vec3_create();
+  const _v0 = vec3_create();
+  const _v1 = vec3_create();
+  const _matrix = mat4_create();
+  const origin = vec3_create();
 
-  var triangle_getArea = (a, b, c) =>
+  const triangle_getArea = (a, b, c) =>
     vec3_length(
       vec3_cross(vec3_subVectors(_v0, c, b), vec3_subVectors(_v1, a, b)),
     ) * 0.5;
 
-  var triangle_getNormal = (a, b, c) =>
+  const triangle_getNormal = (a, b, c) =>
     vec3_normalize(
       vec3_cross(vec3_subVectors(_v0, c, b), vec3_subVectors(_v1, a, b)),
     );
 
-  var randomPointInTriangle = (vA, vB, vC) => {
-    var a = Math.random();
-    var b = Math.random();
+  const randomPointInTriangle = (vA, vB, vC) => {
+    let a = Math.random();
+    let b = Math.random();
 
     if (a + b > 1) {
       a = 1 - a;
       b = 1 - b;
     }
 
-    var c = 1 - a - b;
+    const c = 1 - a - b;
 
     return vec3_addScaledVector(
       vec3_addScaledVector(
@@ -375,8 +375,8 @@ export var greeble_create = (() => {
   };
 
   return (geom, count, fn) => {
-    var totalArea = 0;
-    var cumulativeAreas = geom.faces.map(face => {
+    let totalArea = 0;
+    const cumulativeAreas = geom.faces.map(face => {
       totalArea += triangle_getArea(
         geom.vertices[face.a],
         geom.vertices[face.b],
@@ -385,12 +385,12 @@ export var greeble_create = (() => {
       return totalArea;
     });
 
-    var binarySearch = x => {
-      var start = 0;
-      var end = cumulativeAreas.length - 1;
+    const binarySearch = x => {
+      let start = 0;
+      let end = cumulativeAreas.length - 1;
 
       while (start <= end) {
-        var middle = Math.ceil((start + end) / 2);
+        const middle = Math.ceil((start + end) / 2);
         if (
           !middle ||
           (cumulativeAreas[middle - 1] <= x && cumulativeAreas[middle] > x)
@@ -408,19 +408,19 @@ export var greeble_create = (() => {
 
     return mergeAll(
       ...[...Array(count)].map(() => {
-        var r = Math.random() * totalArea;
-        var index = binarySearch(r);
+        const r = Math.random() * totalArea;
+        const index = binarySearch(r);
 
-        var face = geom.faces[index];
-        var vA = geom.vertices[face.a];
-        var vB = geom.vertices[face.b];
-        var vC = geom.vertices[face.c];
+        const face = geom.faces[index];
+        const vA = geom.vertices[face.a];
+        const vB = geom.vertices[face.b];
+        const vC = geom.vertices[face.c];
 
-        var point = randomPointInTriangle(vA, vB, vC);
-        var normal = triangle_getNormal(vA, vB, vC);
+        const point = randomPointInTriangle(vA, vB, vC);
+        const normal = triangle_getNormal(vA, vB, vC);
         mat4_setPosition(mat4_lookAt(_matrix, origin, normal, vec3_Y), point);
 
-        var greeble = fn();
+        const greeble = fn();
         greeble.vertices.map(vertex => vec3_applyMatrix4(vertex, _matrix));
         return greeble;
       }),
@@ -429,18 +429,18 @@ export var greeble_create = (() => {
 })();
 
 export var phantom_create = () => {
-  var width = 40;
-  var height = 72;
-  var depth = 16;
-  var gap = 4;
+  const width = 40;
+  const height = 72;
+  const depth = 16;
+  const gap = 4;
 
-  var sideWidth = (width - gap) / 2;
-  var sideHeight = 56;
+  const sideWidth = (width - gap) / 2;
+  const sideHeight = 56;
 
-  var eyeColor = vec3_create(16, 1, 1);
-  var eyeSize = 8;
+  const eyeColor = vec3_create(16, 1, 1);
+  const eyeSize = 8;
 
-  var head = box(
+  const head = box(
     [width, height - sideHeight - gap, depth],
     align(ny),
     $translate(
@@ -453,7 +453,7 @@ export var phantom_create = () => {
       [ny_pz, { y: -2 * gap }],
     ),
   );
-  var rightSide = box(
+  const rightSide = box(
     [sideWidth, sideHeight, depth],
     align(px_ny),
     $translate(
@@ -464,7 +464,7 @@ export var phantom_create = () => {
       [nx_py_pz, { z: -depth }],
     ),
   );
-  var leftSide = box(
+  const leftSide = box(
     [sideWidth, sideHeight, depth],
     align(nx_ny),
     $translate(
@@ -476,7 +476,7 @@ export var phantom_create = () => {
     ),
   );
 
-  var eye = box(
+  const eye = box(
     [eyeSize, eyeSize, eyeSize],
     geom =>
       geom_applyQuaternion(
@@ -494,30 +494,30 @@ export var phantom_create = () => {
 };
 
 export var platform_create = (width, height, depth, strokeWidth) => {
-  var innerWidth = width - 4 * strokeWidth;
-  var innerDepth = depth - 4 * strokeWidth;
-  var deleteSideFaces = deleteFaces(face_px, face_nx, face_pz, face_nz);
+  const innerWidth = width - 4 * strokeWidth;
+  const innerDepth = depth - 4 * strokeWidth;
+  const deleteSideFaces = deleteFaces(face_px, face_nx, face_pz, face_nz);
 
-  var base = box(
+  const base = box(
     [width - 2 * strokeWidth, height, innerDepth],
     deleteSideFaces,
   );
-  var frontBase = box(
+  const frontBase = box(
     [innerWidth, height, strokeWidth],
     relativeAlign(nz, base, pz),
     $translateX([nx_nz, -strokeWidth], [px_nz, strokeWidth]),
     deleteSideFaces,
   );
-  var backBase = box(
+  const backBase = box(
     [innerWidth, height, strokeWidth],
     relativeAlign(pz, base, nz),
     $translateX([nx_pz, -strokeWidth], [px_pz, strokeWidth]),
     deleteSideFaces,
   );
 
-  var strokeDimensions = [strokeWidth, height, strokeWidth];
-  var strokeColor = colors([all, [0.4, 0.4, 0.5]]);
-  var halfStrokeWidth = strokeWidth / 2;
+  const strokeDimensions = [strokeWidth, height, strokeWidth];
+  const strokeColor = colors([all, [0.4, 0.4, 0.5]]);
+  const halfStrokeWidth = strokeWidth / 2;
 
   return mergeAll(
     base,
@@ -595,12 +595,12 @@ export var platform_create = (width, height, depth, strokeWidth) => {
 };
 
 export var scanner_create = () => {
-  var size = 16;
-  var length = 32;
-  var headLength = 6;
-  var eyeColor = vec3_create(16, 1, 1);
+  const size = 16;
+  const length = 32;
+  const headLength = 6;
+  const eyeColor = vec3_create(16, 1, 1);
 
-  var head = box(
+  const head = box(
     [size, size, headLength],
     $scale([pz, { x: 0.5, y: 0.5 }]),
     faceColors([face_pz, eyeColor]),
@@ -622,13 +622,13 @@ export var scanner_create = () => {
 };
 
 export var starfield_create = (radius, count) => {
-  var stars = [];
+  const stars = [];
 
-  for (var i = 0; i < count; i++) {
-    var theta = 2 * Math.PI * Math.random();
-    var u = 2 * Math.random() - 1;
-    var v = Math.sqrt(1 - u * u);
-    var size = randFloat(8, 32);
+  for (let i = 0; i < count; i++) {
+    const theta = 2 * Math.PI * Math.random();
+    const u = 2 * Math.random() - 1;
+    const v = Math.sqrt(1 - u * u);
+    const size = randFloat(8, 32);
 
     stars.push(
       box(
@@ -646,8 +646,8 @@ export var starfield_create = (radius, count) => {
 };
 
 export var healthPack_create = () => {
-  var size = 32;
-  var depth = 8;
+  const size = 32;
+  const depth = 8;
   return translate(
     0,
     size,
