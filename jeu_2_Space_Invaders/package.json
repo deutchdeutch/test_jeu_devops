@@ -1,28 +1,14 @@
 {
   "scripts": {
     "start": "parcel ./src/index.html",
-    "build": "parcel build src/index.html --dist-dir build --no-source-maps",
+    "build": "rm -rf build && parcel build -d build --public-url ./ --no-source-maps ./src/index.html",
     "zip": "rm -f bundle.zip && cd build && bestzip ../bundle.zip *",
-    "bundle": "yarn build && yarn zip",
-    "test": "jest",
-    "lint": "eslint \"src/**/*.ts\""
+    "bundle": "yarn build && yarn zip"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.16.4",
-    "@types/jest": "^30.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.58.2",
-    "@typescript-eslint/parser": "^8.58.2",
     "bestzip": "^2.2.0",
-    "eslint": "^10.2.0",
-    "eslint-config-google": "^0.14.0",
-    "jest": "^30.3.0",
-    "parcel": "^2.16.4",
+    "parcel-bundler": "^1.12.5",
     "sass": "^1.39.0",
-    "ts-jest": "^29.4.9",
     "typescript": "^4.4.2"
-  },
-  "eslint": "^8.0.0",
-  "@typescript-eslint/parser": "^6.0.0",
-  "@typescript-eslint/eslint-plugin": "^6.0.0",
-  "eslint-config-google": "^0.14.0"
+  }
 }
