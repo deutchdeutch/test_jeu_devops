@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
     "types": ["jest", "node"],
     "esModuleInterop": true,
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"]
+    "skipLibCheck": true
   },
-  "exclude": ["cypress", "cypress.config.js"]
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "cypress"]
 }
