@@ -113,7 +113,7 @@ jobs:
         run: npm run dev &
       
       - name: Wait for server
-        run: npx wait-on http://localhost:3000 --timeout 60000
+        run: npx wait-on http-get://localhost:3000 --timeout 60000
 
       - name: Run Cypress tests
         run: npm run cypress:run
