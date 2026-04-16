@@ -95,17 +95,17 @@ jobs:
     defaults:
       run:
         working-directory: jeu_1_two_ships_passing_the_night
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Cypress run
-      uses: cypress-io/github-action@v6
-      with:
-        working-directory: jeu_1_two_ships_passing_the_night
-        start: npm run dev
-        wait-on: 'http://localhost:3000'
-        wait-on-timeout: 60
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: jeu_1_two_ships_passing_the_night
+          start: npm run dev
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 60
 
   summary:
     name: Résumé CI
