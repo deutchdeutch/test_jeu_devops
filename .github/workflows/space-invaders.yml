@@ -85,7 +85,10 @@ jobs:
           node-version: 20.x
           cache: npm
           cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
-      - run: npm install
+      - name: Force Clean Install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
       - name: Run Cypress
         run: npm run test:e2e
 
