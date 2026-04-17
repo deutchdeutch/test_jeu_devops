@@ -7,7 +7,7 @@ RUN npx parcel build src/index.html --public-url ./ --dist-dir dist
 FROM node:20 AS builder-two
 WORKDIR /app/two
 COPY ./jeu_1_two_ships_passing_the_night/package*.json ./
-RUN npm install --include=dev
+RUN npm install --ignore-scripts
 COPY ./jeu_1_two_ships_passing_the_night ./
 RUN npx vite build --base=/two_ships_passing_the_night/
 FROM nginx:alpine
