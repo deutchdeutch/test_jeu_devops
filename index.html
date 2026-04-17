@@ -1,43 +1,253 @@
-<!DOCTYPE html><html lang=en><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><title>Space invaders</title><script type=module src=/test_jeu_devops/jeu_2_Space_Invaders.5a3e7254.js></script><link rel=stylesheet href=/test_jeu_devops/jeu_2_Space_Invaders.66a80788.css><body>
-  <canvas id=background></canvas>
-  <canvas id=canvas></canvas>
-  <pre id=debug></pre>
-  <div hidden id=mobile-plane class=mobile>
-    <div id=joystick class=mobile-joystick>
-      <div id=handle class=mobile-joystick-handle>
-        <div id=handle class=mobile-joystick-handle-image></div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>Jeux VideOPS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Roboto", sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 4rem 1rem 2.5rem;
+      border-bottom: 1px solid #1e1e2e;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 6px;
+      background: #1a1a3e;
+      color: #818cf8;
+      margin-bottom: 1.25rem;
+      border: 1px solid #2d2d5e;
+    }
+
+    header h1 {
+      font-size: 50px;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-family: "Zen Dots", sans-serif;
+    }
+
+    header p {
+      font-size: 18px;
+      color: #cdcdcd;
+      max-width: 570px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* GAMES */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 2.5rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .game-card {
+      background: #111118;
+      border: 1px solid #1e1e2e;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: #8383b7;
+    }
+
+    .game-thumb {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      background: #0d0d1a;
+      border-bottom: 1px solid #1e1e2e;
+      position: relative;
+    }
+
+    .game-thumb-label {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #1a1a3e;
+      color: #818cf8;
+      border: 1px solid #2d2d5e;
+      letter-spacing: 0.05em;
+    }
+
+    .game-body {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .game-title {
+      font-size: 21px;
+      font-weight: 600;
+      line-height: 1.4;
+      font-family: "Zen Dots", sans-serif;
+    }
+
+    .game-desc {
+      font-size: 16px;
+      color: #cbcbcb;
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .game-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #161622;
+      color: #a9a9a9;
+      border: 1px solid #1e1e2e;
+    }
+
+    .game-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid #1e1e2e;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid #1e1e2e;
+      background: transparent;
+      color: #e8e8f0;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      transition: background 0.15s;
+    }
+
+    .btn:hover {
+      background: #161622;
+    }
+
+    .btn-primary {
+      background: #1a1a3e;
+      color: #818cf8;
+      border-color: #2d2d5e;
+    }
+
+    .btn-primary:hover {
+      background: #22224e;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 15px;
+      color: #bfbcbc;
+      border-top: 1px solid #1e1e2e;
+      margin-top: 1rem;
+      line-height: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">js13kGames 2021 — thème : space</div>
+    <h1>Jeux VideOPS</h1>
+    <p>Une sélection de jeux rétro JavaScript issus de la compétition js13kGames, déployés et maintenus via une pipeline CI/CD complète.</p>
+  </header>
+
+  <div class="games-grid">
+
+    <div class="game-card">
+      <div class="game-thumb">
+        🛸
+        <span class="game-thumb-label">3D</span>
+      </div>
+      <div class="game-body">
+        <div class="game-title">Two Ships Passing In The Night</div>
+        <div class="game-desc">Un jeu de tir à la première personne en WebGL. Naviguez dans l'espace, esquivez les obstacles et survivez le plus longtemps possible dans cet univers 3D minimaliste.</div>
+        <div class="game-tags">
+          <span class="tag">FPS</span>
+          <span class="tag">WebGL</span>
+          <span class="tag">3D</span>
+          <span class="tag">JavaScript</span>
+        </div>
+      </div>
+      <div class="game-footer">
+        <a class="btn btn-primary" href="/two_ships_passing_the_night/" target="_blank">Jouer</a>
+        <a class="btn" href="REMPLACER_PAR_URL_GITHUB_REPO" target="_blank">GitHub</a>
       </div>
     </div>
-    <div class=mobile-actions>
-      <button id=button-fire class=mobile-actions-button>x</button>
+
+    <div class="game-card">
+      <div class="game-thumb">
+        👾
+        <span class="game-thumb-label">2D</span>
+      </div>
+      <div class="game-body">
+        <div class="game-title">Space Invaders</div>
+        <div class="game-desc">Une réinterprétation moderne du classique Space Invaders. Défendez la Terre contre les vagues d'envahisseurs spatiaux dans ce shooter 2D développé en TypeScript.</div>
+        <div class="game-tags">
+          <span class="tag">Shooter</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">2D</span>
+          <span class="tag">Classique</span>
+        </div>
+      </div>
+      <div class="game-footer">
+        <a class="btn btn-primary" href="/space-invaders/" target="_blank">Jouer</a>
+        <a class="btn" href="githubpages" target="_blank">GitHub</a>
+      </div>
     </div>
-  </div>
-  <p class=score>Score: <span id=score></span></p>
-  <div id=menu class=menu>
-    <div class=menu-panel>
-      <h1>Space Invaders</h1>
-      <button id=start-button>Start</button>
-      <fieldset id=input-source>
-        <legend>Input source</legend>
-        <div>
-          <input checked type=radio name=input-source id=input-mouse value=Mouse>
-          <label for=input-mouse>Mouse</label>
-        </div>
-        <div>
-          <input type=radio name=input-source id=input-gamepad value=Gamepad>
-          <label for=input-gamepad>Gamepad</label>
-        </div>
-        <div>
-          <input type=radio name=input-source id=input-mobile value=Mobile>
-          <label for=input-mobile>Mobile</label>
-        </div>
-      </fieldset>
-    </div>
-  </div>
-  <div hidden id=game-over class=game-over>
-    <p class=game-over-header>GAME OVER</p>
-    <p class=game-over-score>Score: <span id=game-over-score></span></p>
-    <p class=game-over-score>Highscore: <span id=game-over-highscore></span></p>
-    <button id=game-over-button>Play again</button>
+
   </div>
 
+  <footer>
+    Projet Epitech - DALOBA MINTHE & AURELIEN DEUTCHOUA <br>
+    DevOps CI/CD · GitHub Actions · Docker · GitHub Pages
+  </footer>
+
+</body>
+</html>
