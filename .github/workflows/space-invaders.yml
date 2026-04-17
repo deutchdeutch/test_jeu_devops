@@ -108,27 +108,30 @@ jobs:
           echo "| Tests Cypress | ${{ needs.cypress.result }} |" >> $GITHUB_STEP_SUMMARY
 
   deploy:
-    name: Déploiement GitHub Pages
+    name: Déploiement Global
     runs-on: ubuntu-latest
-    needs: [tests, lint, audit, cypress]
-    if: github.ref == 'refs/heads/main' && needs.tests.result == 'success' && needs.cypress.result == 'success'
+    needs: [tests, cypress] 
     permissions:
-        contents: write
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Deploy Portail
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          node-version: 20.x
-          cache: npm
-          cache-dependency-path: jeu_2_Space_Invaders/package-lock.json
-      - name: Install & Build
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ 
+          keep_files: true 
+      - name: Build & Deploy Space Invaders
         run: |
           cd jeu_2_Space_Invaders
           npm install
-          npm run build
-      - name: Deploy to GitHub Pages
+          # On build avec le bon chemin pour le sous-dossier
+          npx parcel build ./src/index.html --dist-dir build --public-url /test_jeu_devops/space-invaders/
+      
+      - name: Publish Space Invaders
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: jeu_2_Space_Invaders/build
-          destination_dir: .
+          destination_dir: space-invaders 
+          keep_files: true
