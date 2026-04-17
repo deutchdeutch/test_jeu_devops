@@ -99,18 +99,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          node-version: 20.x
-          cache: npm
-          cache-dependency-path: jeu_1_two_ships_passing_the_night/package-lock.json
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Cypress tests
-        run: npm run test:e2e
+          working-directory: jeu_1_two_ships_passing_the_night
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
+          wait-on-timeout: 60
 
   summary:
     name: Résumé CI
@@ -160,3 +155,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: jeu_1_two_ships_passing_the_night/dist
           destination_dir: two-ships
+          keep_files: true
+      
+      - name: Deploy site presentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          exclude_assets: '.github,jeu_1_two_ships_passing_the_night,jeu_2_Space_Invaders,README.md,docker-compose.yml,Dockerfile'
+          keep_files: true
