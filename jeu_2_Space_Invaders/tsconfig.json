@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "types": ["jest", "node"],
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", "cypress"]
+}
