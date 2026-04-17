@@ -6,7 +6,7 @@
     "bundle": "yarn build && yarn zip",
     "test": "jest",
     "lint": "eslint \"src/**/*.ts\"",
-    "test:e2e": "cypress run"
+    "test:e2e": "start-server-and-test 'npm run dev' http-get://localhost:1234 'cypress run'"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.16.4",
