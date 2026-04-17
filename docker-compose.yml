@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  plateforme-jeux:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: games_platform
+    ports:
+      - "8085:80" 
+    restart: always
